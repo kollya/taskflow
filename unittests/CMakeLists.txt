@@ -3,7 +3,15 @@ enable_testing()
 include(${TF_3RD_PARTY_DIR}/doctest/doctest.cmake)
 
 list(APPEND TF_UNITTESTS 
-  utility tsq basics algorithm traverse sort
+  utility 
+  tsq 
+  serializer 
+  basics 
+  cancellation
+  semaphore
+  algorithm 
+  traverse 
+  sorting
 )
 
 foreach(unittest IN LISTS TF_UNITTESTS)
@@ -13,6 +21,15 @@ foreach(unittest IN LISTS TF_UNITTESTS)
   doctest_discover_tests(${unittest})
 endforeach()
 
-if(CMAKE_CUDA_COMPILER AND TF_BUILD_CUDA)
+# include CUDA tests
+if(TF_BUILD_CUDA)
   add_subdirectory(${TF_UTEST_DIR}/cuda)
 endif()
+
+# include SYCL tests
+if(TF_BUILD_SYCL)
+  add_subdirectory(${TF_UTEST_DIR}/sycl)
+endif()
+
+
+

@@ -1,4 +1,4 @@
-// Demonstrates the use of observer to monitor worker activities
+// Demonstrates the use of observer to monitor worker activities.
 
 #include <taskflow/taskflow.hpp>
 
@@ -7,20 +7,24 @@ struct MyObserver : public tf::ObserverInterface {
   MyObserver(const std::string& name) {
     std::cout << "constructing observer " << name << '\n';
   }
-
+  
+  // set_up is a constructor-like method that will be called exactly once
+  // passing the number of workers 
   void set_up(size_t num_workers) override final {
-    std::cout << "settting up observer with " << num_workers << " workers\n";
+    std::cout << "setting up observer with " << num_workers << " workers\n";
   }
-
-  void on_entry(size_t w, tf::TaskView tv) override final {
+  
+  // on_entry will be called before a worker runs a task
+  void on_entry(tf::WorkerView wv, tf::TaskView tv) override final {
     std::ostringstream oss;
-    oss << "worker " << w << " ready to run " << tv.name() << '\n';
+    oss << "worker " << wv.id() << " ready to run " << tv.name() << '\n';
     std::cout << oss.str();
   }
-
-  void on_exit(size_t w, tf::TaskView tv) override final {
+  
+  // on_exit will be called after a worker completes a task
+  void on_exit(tf::WorkerView wv, tf::TaskView tv) override final {
     std::ostringstream oss;
-    oss << "worker " << w << " finished running " << tv.name() << '\n';
+    oss << "worker " << wv.id() << " finished running " << tv.name() << '\n';
     std::cout << oss.str();
   }
 

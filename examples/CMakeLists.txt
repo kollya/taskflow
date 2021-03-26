@@ -1,14 +1,25 @@
 list(APPEND TF_EXAMPLES
   simple 
+  async
+  subflow_async
   observer 
   subflow 
   fibonacci 
   condition
+  switch_case
+  do_while
+  while
+  if_else
+  nested_if_else
   visualization 
   reduce 
   parallel_for 
+  parallel_sort
   run 
   composition
+  limited_concurrency
+  cancel
+  cancel_async
 )
 
 foreach(example IN LISTS TF_EXAMPLES)
@@ -18,8 +29,18 @@ foreach(example IN LISTS TF_EXAMPLES)
     )
 endforeach()
 
-if (CMAKE_CUDA_COMPILER AND TF_BUILD_CUDA)
+# -----------------------------------------------------------------------------
+# cuda examples
+# -----------------------------------------------------------------------------
+if(TF_BUILD_CUDA)
   add_subdirectory(cuda)
+endif()
+
+# -----------------------------------------------------------------------------
+# sycl examples
+# -----------------------------------------------------------------------------
+if(TF_BUILD_SYCL)
+  add_subdirectory(sycl)
 endif()
 
 

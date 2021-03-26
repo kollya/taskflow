@@ -6,6 +6,8 @@ We study the graph traversal problem by visiting each vertex in parallel followi
 edge dependencies. Traversing a graph is a fundamental building block of many
 graph applications especially for large-scale graph analytics.
 
+@tableofcontents
+
 @section GraphTraversalProblemFormulation Problem Formulation
 
 Given a directed acyclic graph (DAG), i.e., a graph that has no cycles, 
@@ -13,7 +15,8 @@ we would like to traverse each vertex in order without breaking dependency const
 The following figure shows a graph of six vertices and seven edges.
 Each vertex represents a particular task and each edge represents a task dependency between two tasks.
 
-@image html images/task-level-parallelism.svg width=50%
+<!-- @image html images/task-level-parallelism.svg width=50% -->
+@dotfile images/task-level-parallelism.dot
 
 Traversing the above graph in parallel, the maximum parallelism we can acquire is three.
 When Task1 finishes, we can run Task2, Task3, and Task4 in parallel.
@@ -71,12 +74,12 @@ restrict the number of nodes in the graph and the maximum number of outgoing edg
 
 @section GraphTraversalStaticTraversal Static Traversal
 
-We create a taskflow to traverse the graph using static tasks (see @ref chapter1).
+We create a taskflow to traverse the graph using static tasks (see @ref StaticTasking).
 Each task does nothing but marks @c visited to @c true 
 and subtracts @c dependents from one, both of which are used for validation after the graph is traversed.
 In practice, this computation may be replaced with a heavy function.
 
-@code{.cpp}    
+@code{.cpp}
 tf::Taskflow taskflow;
 tf::Executor executor;
 
@@ -117,7 +120,9 @@ Second, it iterates each outgoing edge of a node and creates a dependency betwee
 (successor) of that edge.
 The resulting taskflow structure is topologically equivalent to the given graph.
 
-@image html images/graph_traversal_2.svg width=100%
+<!-- @image html images/graph_traversal_2.svg width=100% -->
+
+@dotfile images/graph_traversal_2.dot
 
 With task parallelism, we flow computation naturally with the graph structure.
 The runtime autonomously distributes tasks across processor cores to obtain maximum task parallelism.
@@ -125,7 +130,7 @@ You do not need to worry about details of scheduling.
 
 @section GraphTraversalDynamicTraversal Dynamic Traversal 
 
-We can traverse the graph dynamically using tf::Subflow (see @ref chapter3).
+We can traverse the graph dynamically using tf::Subflow (see @ref DynamicTasking).
 We start from the source nodes of zero incoming edges and recursively spawn subflows 
 whenever the dependency of a node is meet.
 Since we are creating tasks from the execution context of another task,
@@ -177,7 +182,10 @@ for(size_t i=0; i<num_nodes; i++) {
 }
 @endcode
 
-@image html images/graph_traversal_1.svg width=90%
+A partial graph is shown as follows:
+
+<!-- @image html images/graph_traversal_1.svg width=90% -->
+@dotfile images/graph_traversal_1.dot
 
 In general, the dynamic version of graph traversal is slower than the static version due to the
 overhead incurred by spawning subflows.
